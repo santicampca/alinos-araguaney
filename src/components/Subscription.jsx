@@ -1,7 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { useToast } from "../context/ToastContext.jsx";
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function Subscription() {
+  const { showToast } = useToast();
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const value = email.trim();
+    if (!value) {
+      setError("Ingresa tu correo para suscribirte.");
+      return;
+    }
+    if (!EMAIL_REGEX.test(value)) {
+      setError("Ingresa un correo electrónico válido.");
+      return;
+    }
+
+    setError("");
+    showToast("¡Listo! Ya estás suscrito a Aliños Araguaney 🌿", { icon: "mark_email_read" });
+    setEmail("");
+  };
+
   return (
     <section className="py-section-gap-mobile md:py-section-gap-desktop bg-primary text-on-primary overflow-hidden relative">
       <div className="absolute inset-0 opacity-10">
@@ -42,13 +67,31 @@ export default function Subscription() {
                 <span>Muestras Gratis de Nuevos Productos</span>
               </li>
             </ul>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-10 py-5 bg-secondary-container text-on-secondary-container font-label-lg text-label-lg rounded-full hover:shadow-2xl transition-shadow"
-            >
-              Suscribirse Ahora
-            </motion.button>
+            <form onSubmit={handleSubmit} noValidate className="space-y-2 max-w-md">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (error) setError("");
+                  }}
+                  placeholder="Tu correo electrónico"
+                  aria-label="Correo electrónico para suscripción"
+                  aria-invalid={Boolean(error)}
+                  className="flex-1 px-5 py-4 rounded-full bg-white/10 border border-white/30 placeholder-white/60 text-on-primary focus:outline-none focus:ring-2 focus:ring-secondary-container"
+                />
+                <motion.button
+                  type="submit"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-10 py-4 bg-secondary-container text-on-secondary-container font-label-lg text-label-lg rounded-full hover:shadow-2xl transition-shadow whitespace-nowrap"
+                >
+                  Suscribirse Ahora
+                </motion.button>
+              </div>
+              {error && <p className="text-sm text-secondary-container font-medium pl-2">{error}</p>}
+            </form>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 24 }}

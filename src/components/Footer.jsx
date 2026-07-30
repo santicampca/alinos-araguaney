@@ -1,7 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { empresa } from "../data/empresa";
+import { useToast } from "../context/ToastContext.jsx";
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function Footer() {
+  const { showToast } = useToast();
+  const [email, setEmail] = useState("");
+
+  const handleNewsletterSubmit = (e) => {
+    e.preventDefault();
+    const value = email.trim();
+    if (!EMAIL_REGEX.test(value)) {
+      showToast("Ingresa un correo electrónico válido.", { icon: "error" });
+      return;
+    }
+    showToast("¡Gracias por suscribirte!", { icon: "mark_email_read" });
+    setEmail("");
+  };
+
   return (
     <footer
       id="historia"
@@ -61,19 +79,26 @@ export default function Footer() {
           </h4>
 
           <div className="flex flex-col gap-2">
-            <a
+            <Link
               className="font-body-md text-body-md text-on-surface-variant hover:underline decoration-secondary"
-              href="#"
+              to="/#shop"
             >
               Productos
-            </a>
+            </Link>
 
-            <a
+            <Link
               className="font-body-md text-body-md text-on-surface-variant hover:underline decoration-secondary"
-              href="#"
+              to="/personalizar"
+            >
+              Personaliza tu aliño
+            </Link>
+
+            <Link
+              className="font-body-md text-body-md text-on-surface-variant hover:underline decoration-secondary"
+              to="/#recetas"
             >
               Recetas
-            </a>
+            </Link>
 
             <a
               className="font-body-md text-body-md text-on-surface-variant hover:underline decoration-secondary"
@@ -95,17 +120,20 @@ export default function Footer() {
             Recibe recetas y ofertas exclusivas.
           </p>
 
-          <div className="flex gap-2">
+          <form onSubmit={handleNewsletterSubmit} noValidate className="flex gap-2">
             <input
               className="flex-1 bg-white border border-outline-variant rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
               placeholder="Tu email"
               type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              aria-label="Correo electrónico para newsletter"
             />
 
-            <button className="bg-primary text-white p-2 rounded-xl">
+            <button type="submit" className="bg-primary text-white p-2 rounded-xl" aria-label="Suscribirse">
               <span className="material-symbols-outlined">send</span>
             </button>
-          </div>
+          </form>
         </div>
 
       </div>
