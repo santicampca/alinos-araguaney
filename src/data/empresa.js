@@ -1,17 +1,25 @@
 export const empresa = {
+
   nombre: "Aliños Araguaney",
 
-  slogan: "El corazón de tu cocina.",
+  slogan: "Aliños frescos preparados diariamente.",
+
+  instagram: "https://www.instagram.com/alinos_araguaney",
 
   ciudad: "Caracas",
 
-  whatsapp: import.meta.env.VITE_WHATSAPP_NUMBER,
+  telefono: "",
 
-  instagram: "https://instagram.com/alinos_araguaney",
+  envios: {
 
-  sitioWeb: "https://alinos-araguaney.vercel.app",
+    ciudad: "Caracas",
 
-  entrega: "Las entregas se coordinan por WhatsApp.",
+    gratis: true,
 
-  envioGratis: true
+    cantidadPromocion: 5,
+
+    descripcion: "Los horarios de entrega se coordinan por WhatsApp."
+
+  }
+
 };
