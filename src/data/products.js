@@ -18,6 +18,7 @@ export const PRODUCTS = [
     defaultWeight: "500g",
     badge: "bestseller",
     stockLabel: "En Stock",
+    categoria: "alinos",
   },
   {
     id: "base-ajo-aceite",
@@ -28,6 +29,7 @@ export const PRODUCTS = [
     pricePer100g: 6.0 / 2.5, // referencia original: 250g por $6.00
     defaultWeight: "250g",
     badge: "new",
+    categoria: "alinos",
   },
   {
     id: "mix-parrillero",
@@ -39,6 +41,7 @@ export const PRODUCTS = [
     defaultWeight: "500g",
     badge: "offer",
     compareAtPer100g: (5.5 / 4) * 1.25, // precio "antes de oferta" para el tachado
+    categoria: "hierbas",
   },
 ];
 

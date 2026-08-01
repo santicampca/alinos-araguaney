@@ -5,6 +5,7 @@ import { useCart } from "../context/CartContext.jsx";
 
 const NAV_LINKS = [
   { label: "Shop", to: "/#shop" },
+  { label: "Catálogo", to: "/catalogo" },
   { label: "Personaliza", to: "/personalizar" },
   { label: "Our Story", to: "/#historia" },
   { label: "Recipes", to: "/#recetas" },

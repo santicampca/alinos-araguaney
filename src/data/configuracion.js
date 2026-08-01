@@ -11,5 +11,7 @@ export const configuracion = {
 
   permitirPersonalizacion: true,
 
-  permitirMayoristas: true
+  permitirMayoristas: true,
+
+  productosPorPagina: 8
 };
