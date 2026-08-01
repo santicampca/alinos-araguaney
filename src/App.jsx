@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from "react-router-dom";
 
 import Personalizar from "./pages/Personalizar.jsx";
 import Catalogo from "./pages/Catalogo.jsx";
+import Producto from "./pages/Producto.jsx";
 import TopBar from "./components/TopBar.jsx";
 import Navbar from "./components/Navbar.jsx";
 import Hero from "./components/Hero.jsx";
@@ -54,6 +55,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/catalogo" element={<Catalogo />} />
+          <Route path="/producto/:id" element={<Producto />} />
           <Route path="/personalizar" element={<Personalizar />} />
         </Routes>
       </main>

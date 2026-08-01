@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import ProductBadge from "./ProductBadge.jsx";
 import QuantitySelector from "./QuantitySelector.jsx";
 import WeightSelector from "./WeightSelector.jsx";
-import { priceForWeight, compareAtPriceForWeight } from "../data/products.js";
+import { priceForWeight, compareAtPriceForWeight, getProductThumbnail } from "../data/products.js";
 import { useCart } from "../context/CartContext.jsx";
 import { useToast } from "../context/ToastContext.jsx";
 
@@ -15,6 +16,7 @@ export default function ProductCard({ product }) {
 
   const price = priceForWeight(product, weight);
   const compareAtPrice = compareAtPriceForWeight(product, weight);
+  const detailUrl = `/producto/${product.id}`;
 
   const handleAddToCart = () => {
     addItem(product, weight, quantity, price);
@@ -31,32 +33,39 @@ export default function ProductCard({ product }) {
       whileHover={{ y: -6 }}
       className="product-card group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-500 flex flex-col"
     >
-      <div className="relative aspect-square overflow-hidden bg-[#F5F5F7]">
-        <img
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-          src={product.image}
-          alt={product.name}
-        />
-        <ProductBadge type={product.badge} />
-        {product.stockLabel && (
-          <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-green-700 font-label-md text-label-md flex items-center gap-1 shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-green-500"></span> {product.stockLabel}
-          </div>
-        )}
-      </div>
-      <div className="p-6 space-y-4 flex-1 flex flex-col">
-        <div className="space-y-2">
-          <div className="flex justify-between items-start gap-2">
-            <h3 className="font-headline-md text-headline-md text-primary">{product.name}</h3>
-            <div className="text-right shrink-0">
-              <span className="font-label-lg text-label-lg block">${price.toFixed(2)}</span>
-              {compareAtPrice && (
-                <span className="text-xs line-through text-outline">${compareAtPrice.toFixed(2)}</span>
-              )}
+      {/* className="contents" hace que el <Link> no agregue ninguna caja al layout:
+          se comporta visualmente como si no existiera, así el click navega
+          al detalle sin alterar el diseño ni el grid de la tarjeta. */}
+      <Link to={detailUrl} className="contents" aria-label={`Ver detalle de ${product.name}`}>
+        <div className="relative aspect-square overflow-hidden bg-[#F5F5F7] cursor-pointer">
+          <img
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            src={getProductThumbnail(product)}
+            alt={product.name}
+          />
+          <ProductBadge type={product.badge} />
+          {product.stockLabel && (
+            <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-green-700 font-label-md text-label-md flex items-center gap-1 shadow-sm">
+              <span className="w-2 h-2 rounded-full bg-green-500"></span> {product.stockLabel}
             </div>
-          </div>
-          <p className="font-body-md text-body-md text-on-surface-variant">{product.description}</p>
+          )}
         </div>
+      </Link>
+      <div className="p-6 space-y-4 flex-1 flex flex-col">
+        <Link to={detailUrl} className="contents" aria-label={`Ver detalle de ${product.name}`}>
+          <div className="space-y-2 cursor-pointer">
+            <div className="flex justify-between items-start gap-2">
+              <h3 className="font-headline-md text-headline-md text-primary">{product.name}</h3>
+              <div className="text-right shrink-0">
+                <span className="font-label-lg text-label-lg block">${price.toFixed(2)}</span>
+                {compareAtPrice && (
+                  <span className="text-xs line-through text-outline">${compareAtPrice.toFixed(2)}</span>
+                )}
+              </div>
+            </div>
+            <p className="font-body-md text-body-md text-on-surface-variant">{product.description}</p>
+          </div>
+        </Link>
 
         <div className="space-y-3 pt-2 mt-auto">
           <WeightSelector selected={weight} onChange={setWeight} />

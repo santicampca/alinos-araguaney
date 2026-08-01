@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useReducer } from "react";
+import { getProductThumbnail } from "../data/products.js";
 
 const STORAGE_KEY = "araguaney_cart_v1";
 const CartContext = createContext(null);
@@ -38,7 +39,7 @@ function reducer(state, action) {
             cartItemId,
             productId: product.id,
             name: product.name,
-            image: product.image,
+            image: getProductThumbnail(product),
             weight,
             quantity,
             unitPrice,
