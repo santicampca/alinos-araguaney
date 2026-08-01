@@ -3,7 +3,11 @@
 // VITE_WHATSAPP_NUMBER=584121234567
 const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || "584120000000";
 
-export function buildWhatsAppOrderUrl(items, total) {
+// Arma el link de WhatsApp con el resumen completo del pedido: productos,
+// subtotal, envío y total. Queda listo para integrarse: el día que haya un
+// checkout con datos del cliente (nombre, dirección, etc.), solo hay que
+// agregar esos campos al arreglo `lines` antes del cierre del mensaje.
+export function buildWhatsAppOrderUrl({ items, subtotal, shipping = 0, total }) {
   const lines = [];
   lines.push("🛒 *Nuevo Pedido - Aliños Araguaney*");
   lines.push("");
@@ -14,6 +18,8 @@ export function buildWhatsAppOrderUrl(items, total) {
   });
 
   lines.push("");
+  lines.push(`Subtotal: $${subtotal.toFixed(2)}`);
+  lines.push(shipping > 0 ? `Envío: $${shipping.toFixed(2)}` : "Envío: Gratis");
   lines.push(`*Total del pedido: $${total.toFixed(2)}*`);
   lines.push("");
   lines.push("Quisiera confirmar este pedido, ¡gracias! 🌿");

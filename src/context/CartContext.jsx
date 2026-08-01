@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useReducer } from "react";
 import { getProductThumbnail } from "../data/products.js";
+import { calcularEnvio, faltanteParaEnvioGratis } from "../utils/envio.js";
 
 const STORAGE_KEY = "araguaney_cart_v1";
 const CartContext = createContext(null);
@@ -95,12 +96,18 @@ export function CartProvider({ children }) {
     [state.items]
   );
 
+  const shipping = useMemo(() => calcularEnvio(subtotal), [subtotal]);
+  const total = useMemo(() => Math.round((subtotal + shipping) * 100) / 100, [subtotal, shipping]);
+  const freeShippingRemaining = useMemo(() => faltanteParaEnvioGratis(subtotal), [subtotal]);
+
   const value = useMemo(
     () => ({
       items: state.items,
       isOpen: state.isOpen,
       subtotal,
-      total: subtotal, // el envío/impuestos se coordinan por WhatsApp
+      shipping,
+      total,
+      freeShippingRemaining,
       itemCount,
       addItem: (product, weight, quantity, unitPrice) =>
         dispatch({ type: "ADD_ITEM", payload: { product, weight, quantity, unitPrice } }),
@@ -112,7 +119,7 @@ export function CartProvider({ children }) {
       closeCart: () => dispatch({ type: "CLOSE_CART" }),
       toggleCart: () => dispatch({ type: "TOGGLE_CART" }),
     }),
-    [state.items, state.isOpen, subtotal, itemCount]
+    [state.items, state.isOpen, subtotal, shipping, total, freeShippingRemaining, itemCount]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

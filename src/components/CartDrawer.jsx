@@ -6,7 +6,8 @@ import QuantitySelector from "./QuantitySelector.jsx";
 import { buildWhatsAppOrderUrl } from "../utils/whatsapp.js";
 
 export default function CartDrawer() {
-  const { items, isOpen, closeCart, removeItem, updateQuantity, subtotal, total } = useCart();
+  const { items, isOpen, closeCart, removeItem, updateQuantity, clearCart, subtotal, shipping, total, freeShippingRemaining } =
+    useCart();
   const { showToast } = useToast();
 
   const handleCheckout = () => {
@@ -14,8 +15,13 @@ export default function CartDrawer() {
       showToast("Tu carrito está vacío", { icon: "info" });
       return;
     }
-    const url = buildWhatsAppOrderUrl(items, total);
+    const url = buildWhatsAppOrderUrl({ items, subtotal, shipping, total });
     window.open(url, "_blank", "noopener,noreferrer");
+  };
+
+  const handleClearCart = () => {
+    clearCart();
+    showToast("Carrito vaciado", { icon: "delete_sweep" });
   };
 
   return (
@@ -41,14 +47,24 @@ export default function CartDrawer() {
           >
             <div className="flex justify-between items-center mb-6">
               <h2 className="font-headline-md text-headline-md text-primary">Tu Carrito</h2>
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                className="material-symbols-outlined text-on-surface-variant"
-                onClick={closeCart}
-                aria-label="Cerrar carrito"
-              >
-                close
-              </motion.button>
+              <div className="flex items-center gap-4">
+                {items.length > 0 && (
+                  <button
+                    onClick={handleClearCart}
+                    className="text-xs text-on-surface-variant hover:text-error transition-colors underline"
+                  >
+                    Vaciar carrito
+                  </button>
+                )}
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  className="material-symbols-outlined text-on-surface-variant"
+                  onClick={closeCart}
+                  aria-label="Cerrar carrito"
+                >
+                  close
+                </motion.button>
+              </div>
             </div>
 
             {items.length === 0 ? (
@@ -118,11 +134,20 @@ export default function CartDrawer() {
                 </div>
 
                 <div className="pt-4 border-t border-outline-variant space-y-2 mt-4">
+                  {freeShippingRemaining !== null && freeShippingRemaining > 0 && (
+                    <p className="text-xs text-secondary bg-secondary-container/40 text-on-secondary-container rounded-lg px-3 py-2 mb-2">
+                      🚚 Te faltan ${freeShippingRemaining.toFixed(2)} para envío gratis
+                    </p>
+                  )}
                   <div className="flex justify-between text-sm text-on-surface-variant">
                     <span>Subtotal</span>
                     <span>${subtotal.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between font-label-lg text-label-lg text-primary">
+                  <div className="flex justify-between text-sm text-on-surface-variant">
+                    <span>Envío</span>
+                    <span>{shipping > 0 ? `$${shipping.toFixed(2)}` : "Gratis"}</span>
+                  </div>
+                  <div className="flex justify-between font-label-lg text-label-lg text-primary pt-1 border-t border-outline-variant">
                     <span>Total</span>
                     <span>${total.toFixed(2)}</span>
                   </div>
