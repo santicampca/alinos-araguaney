@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -30,6 +30,15 @@ export default function Producto() {
 
   const categoriaInfo = producto ? categorias.find((c) => c.id === producto.categoria) : null;
 
+  // El Aliño Personalizado no tiene página de producto: si alguien entra
+  // por la URL directa (/producto/alino-personalizado), lo mandamos a
+  // /personalizar, que es el único flujo válido para ese producto.
+  useEffect(() => {
+    if (producto?.personalizable) {
+      navigate("/personalizar", { replace: true });
+    }
+  }, [producto, navigate]);
+
   // Misma función que usa el carrito (priceForWeight) — el precio unitario se
   // recalcula en cada render según el peso elegido, y el total según la
   // cantidad. Nunca hay un cálculo distinto al que usa el carrito.
@@ -56,7 +65,7 @@ export default function Producto() {
           ]}
         />
 
-        {cargando && <ProductDetailSkeleton />}
+        {(cargando || producto?.personalizable) && <ProductDetailSkeleton />}
 
         {!cargando && !producto && (
           <div className="grid grid-cols-1">
@@ -70,7 +79,7 @@ export default function Producto() {
           </div>
         )}
 
-        {!cargando && producto && (
+        {!cargando && producto && !producto.personalizable && (
           <>
             <motion.div
               initial={{ opacity: 0, y: 16 }}

@@ -23,14 +23,16 @@ export function UpsellProvider({ children }) {
     [cfg.categoriaOferta]
   );
 
-  function agregarAlCarrito(product, weightId, quantity, unitPrice) {
-    addItem(product, weightId, quantity, unitPrice);
+  function agregarAlCarrito(product, weightId, quantity, unitPrice, ingredientes) {
+    addItem(product, weightId, quantity, unitPrice, ingredientes);
   }
 
   // Punto único de entrada para "agregar al carrito" en toda la app.
-  // Si el producto es el disparador configurado, intercepta y abre el
-  // modal en vez de agregar de inmediato.
-  function solicitarAgregado(product, weightId, quantity, unitPrice) {
+  // Si el producto es el disparador configurado (el Aliño Personalizado),
+  // intercepta y abre el modal en vez de agregar de inmediato. `ingredientes`
+  // es opcional: lo usa el personalizador para llevar su configuración
+  // completa (peso + ingredientes elegidos) hasta el carrito.
+  function solicitarAgregado(product, weightId, quantity, unitPrice, ingredientes) {
     const debeOfrecerUpsell =
       cfg.activa &&
       cfg.productoDisparadorId &&
@@ -38,17 +40,21 @@ export function UpsellProvider({ children }) {
       hierbasDisponibles.length > 0;
 
     if (!debeOfrecerUpsell) {
-      agregarAlCarrito(product, weightId, quantity, unitPrice);
+      agregarAlCarrito(product, weightId, quantity, unitPrice, ingredientes);
       showToast(`${product.name} agregado al carrito`, { icon: "shopping_bag" });
       return;
     }
 
-    setState({ open: true, step: "oferta", pendingItem: { product, weightId, quantity, unitPrice } });
+    setState({
+      open: true,
+      step: "oferta",
+      pendingItem: { product, weightId, quantity, unitPrice, ingredientes },
+    });
   }
 
   function continuarSinHierba() {
-    const { product, weightId, quantity, unitPrice } = state.pendingItem;
-    agregarAlCarrito(product, weightId, quantity, unitPrice);
+    const { product, weightId, quantity, unitPrice, ingredientes } = state.pendingItem;
+    agregarAlCarrito(product, weightId, quantity, unitPrice, ingredientes);
     showToast(`${product.name} agregado al carrito`, { icon: "shopping_bag" });
     cerrarModal();
   }
@@ -58,8 +64,8 @@ export function UpsellProvider({ children }) {
   }
 
   function confirmarHierba(hierba) {
-    const { product, weightId, quantity, unitPrice } = state.pendingItem;
-    agregarAlCarrito(product, weightId, quantity, unitPrice);
+    const { product, weightId, quantity, unitPrice, ingredientes } = state.pendingItem;
+    agregarAlCarrito(product, weightId, quantity, unitPrice, ingredientes);
 
     const hierbaWeightId = hierba.defaultWeight;
     const hierbaPrice = priceForWeight(hierba, hierbaWeightId);

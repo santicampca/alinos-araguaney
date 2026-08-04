@@ -12,10 +12,67 @@ export default function ProductCard({ product }) {
   const [quantity, setQuantity] = useState(1);
   const { solicitarAgregado } = useUpsell();
 
+  const thumbnail = getProductThumbnail(product);
+
+  // El Aliño Personalizado no es un producto normal: no se agrega al
+  // carrito desde la tarjeta ni tiene página de producto propia. La tarjeta
+  // completa lleva directo a /personalizar.
+  if (product.personalizable) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        whileHover={{ y: -6 }}
+        className="product-card group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-500 flex flex-col"
+      >
+        <Link to="/personalizar" className="contents" aria-label={`Ir a ${product.name}`}>
+          <div className="relative aspect-square overflow-hidden bg-[#F5F5F7] cursor-pointer">
+            {thumbnail ? (
+              <img
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                src={thumbnail}
+                alt={product.name}
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <span className="material-symbols-outlined text-outline" style={{ fontSize: "40px" }}>
+                  tune
+                </span>
+              </div>
+            )}
+          </div>
+        </Link>
+        <div className="p-6 space-y-4 flex-1 flex flex-col">
+          <Link to="/personalizar" className="contents" aria-label={`Ir a ${product.name}`}>
+            <div className="space-y-2 cursor-pointer">
+              <h3 className="font-headline-md text-headline-md text-primary">{product.name}</h3>
+              <p className="font-body-md text-body-md text-on-surface-variant">{product.description}</p>
+            </div>
+          </Link>
+          <div className="pt-2 mt-auto">
+            <Link to="/personalizar">
+              <motion.div
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-on-primary rounded-xl font-label-lg text-label-lg shadow-sm hover:shadow-lg transition-shadow"
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>
+                  tune
+                </span>
+                Personalizar
+              </motion.div>
+            </Link>
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
+
   const price = priceForWeight(product, weight);
   const compareAtPrice = compareAtPriceForWeight(product, weight);
   const detailUrl = `/producto/${product.id}`;
-  const thumbnail = getProductThumbnail(product);
 
   const handleAddToCart = () => {
     // Punto único de entrada al carrito: si este producto está configurado

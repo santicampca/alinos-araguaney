@@ -96,17 +96,32 @@ export default function CartDrawer() {
                         transition={{ duration: 0.25 }}
                         className="flex gap-3 p-3 rounded-xl border border-outline-variant bg-white"
                       >
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className="w-20 h-20 rounded-lg object-cover shrink-0 bg-surface-container-low"
-                        />
+                        {item.image ? (
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="w-20 h-20 rounded-lg object-cover shrink-0 bg-surface-container-low"
+                          />
+                        ) : (
+                          <div className="w-20 h-20 rounded-lg shrink-0 bg-surface-container-low flex items-center justify-center">
+                            <span className="material-symbols-outlined text-outline">image</span>
+                          </div>
+                        )}
                         <div className="flex-1 min-w-0 flex flex-col justify-between">
                           <div>
                             <p className="font-label-lg text-label-lg truncate">{item.name}</p>
                             <p className="text-xs text-on-surface-variant">
                               {item.weight} · ${item.unitPrice.toFixed(2)} c/u
                             </p>
+                            {item.ingredientes && item.ingredientes.length > 0 && (
+                              <ul className="mt-1 space-y-0.5">
+                                {item.ingredientes.map((ing) => (
+                                  <li key={ing.nombre} className="text-xs text-on-surface-variant">
+                                    • {ing.nombre} — {ing.gramos} g
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
                           </div>
                           <div className="flex items-center justify-between gap-2 mt-2">
                             <QuantitySelector

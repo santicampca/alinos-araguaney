@@ -24,8 +24,14 @@ function loadInitialState() {
 function reducer(state, action) {
   switch (action.type) {
     case "ADD_ITEM": {
-      const { product, weight, quantity, unitPrice } = action.payload;
-      const cartItemId = `${product.id}-${weight}`;
+      const { product, weight, quantity, unitPrice, ingredientes } = action.payload;
+      // Si el producto trae ingredientes (viene del personalizador), cada
+      // configuración distinta es una línea propia del carrito; si trae
+      // exactamente los mismos ingredientes y peso, sí se suma la cantidad.
+      const ingredientesKey = ingredientes
+        ? JSON.stringify([...ingredientes].sort((a, b) => a.nombre.localeCompare(b.nombre)))
+        : "";
+      const cartItemId = `${product.id}-${weight}-${ingredientesKey}`;
       const existing = state.items.find((i) => i.cartItemId === cartItemId);
 
       let items;
@@ -44,6 +50,7 @@ function reducer(state, action) {
             weight,
             quantity,
             unitPrice,
+            ingredientes: ingredientes ?? undefined,
           },
         ];
       }
@@ -109,8 +116,8 @@ export function CartProvider({ children }) {
       total,
       freeShippingRemaining,
       itemCount,
-      addItem: (product, weight, quantity, unitPrice) =>
-        dispatch({ type: "ADD_ITEM", payload: { product, weight, quantity, unitPrice } }),
+      addItem: (product, weight, quantity, unitPrice, ingredientes) =>
+        dispatch({ type: "ADD_ITEM", payload: { product, weight, quantity, unitPrice, ingredientes } }),
       removeItem: (cartItemId) => dispatch({ type: "REMOVE_ITEM", payload: cartItemId }),
       updateQuantity: (cartItemId, quantity) =>
         dispatch({ type: "UPDATE_QUANTITY", payload: { cartItemId, quantity } }),

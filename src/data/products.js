@@ -20,14 +20,36 @@
 export const PRODUCTS = [
   // ─── ALIÑOS ───────────────────────────────────────────────
   {
-    id: "alino-personalizado",
-    name: "Aliño Personalizado",
-    description: "Aliño a tu gusto, con la combinación de ingredientes que prefieras.",
+    id: "alino-araguaney",
+    name: "Aliño Araguaney",
+    description: "Nuestro aliño clásico, listo para usar en cualquier preparación.",
     images: [],
     categoria: "alinos",
     badge: "bestseller",
     destacado: true,
     stockLabel: "En Stock",
+    defaultWeight: "400g",
+    presentaciones: [
+      { id: "250g", etiqueta: "250 g", gramos: 250, precio: 0 },
+      { id: "400g", etiqueta: "400 g", gramos: 400, precio: 0, estandar: true },
+      { id: "500g", etiqueta: "500 g", gramos: 500, precio: 0 },
+    ],
+  },
+  {
+    // No es un producto normal: no se agrega al carrito desde la tarjeta.
+    // `personalizable: true` hace que ProductCard muestre una tarjeta CTA
+    // que lleva directo a /personalizar (ver ProductCard.jsx), y que
+    // Producto.jsx redirija ahí si alguien entra por la URL directa.
+    // Las `presentaciones` se mantienen porque el personalizador las usa
+    // para calcular el precio según el tamaño elegido (misma lógica que
+    // usa el carrito — ver Personalizar.jsx).
+    id: "alino-personalizado",
+    name: "Aliño Personalizado",
+    description: "Elige tus ingredientes y arma tu combinación ideal.",
+    images: [],
+    categoria: "alinos",
+    personalizable: true,
+    destacado: true,
     defaultWeight: "400g",
     presentaciones: [
       { id: "250g", etiqueta: "250 g", gramos: 250, precio: 0 },
@@ -70,7 +92,6 @@ export const PRODUCTS = [
     description: "Cebolla morada fresca, picada y lista para usar.",
     images: [],
     categoria: "individuales",
-    destacado: true,
     stockLabel: "En Stock",
     defaultWeight: "200g",
     presentaciones: [

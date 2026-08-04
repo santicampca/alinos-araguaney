@@ -15,6 +15,11 @@ export function buildWhatsAppOrderUrl({ items, subtotal, shipping = 0, total }) 
   items.forEach((item) => {
     const lineTotal = (item.unitPrice * item.quantity).toFixed(2);
     lines.push(`• ${item.quantity} x ${item.name} (${item.weight}) — $${lineTotal}`);
+    if (item.ingredientes && item.ingredientes.length > 0) {
+      item.ingredientes.forEach((ing) => {
+        lines.push(`   - ${ing.nombre} (${ing.gramos} g)`);
+      });
+    }
   });
 
   lines.push("");
