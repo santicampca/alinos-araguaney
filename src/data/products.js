@@ -1,67 +1,199 @@
-// Catálogo base — mismo contenido/textos/precios del diseño original.
-// El precio se define "por 100g" para poder ofrecer los 3 pesos (250g/500g/1kg)
-// de forma consistente, tomando como referencia el precio y peso original de cada producto.
+// Catálogo de productos de Aliños Araguaney.
 //
-// Modelo de imágenes: todos los productos usan `images: []` (arreglo), incluso
-// cuando por ahora solo tengan una foto. Así, cuando lleguen productos reales
-// con galería, no hay que migrar nada — solo agregar más elementos al arreglo.
-
-export const WEIGHTS = [
-  { key: "250g", grams: 250, label: "250g" },
-  { key: "500g", grams: 500, label: "500g" },
-  { key: "1kg", grams: 1000, label: "1kg" },
-];
+// Modelo escalable: cada producto define su propio arreglo `presentaciones`
+// (no todos los productos manejan los mismos pesos — las hierbas solo vienen
+// en 25g, los individuales en 200g/400g, etc). Para agregar un producto nuevo,
+// solo hay que agregar un objeto nuevo a `PRODUCTS` con su propia lista de
+// presentaciones — no hay que tocar ningún componente.
+//
+// ⚠️ PRECIOS PENDIENTES: todavía no nos dieron los precios reales de este
+// catálogo, así que cada presentación quedó con `precio: 0` como placeholder
+// explícito (no se inventó ningún número). Antes de publicar la tienda,
+// reemplaza los `precio: 0` de este archivo por los precios reales — no hace
+// falta tocar nada más, todo el resto (carrito, catálogo, producto, WhatsApp)
+// ya lee este valor automáticamente.
+//
+// Modelo de imágenes: `images: []` (arreglo). Los productos que todavía no
+// tienen foto quedan con el arreglo vacío, y los componentes (ProductCard,
+// ProductGallery) ya saben mostrar un ícono de reemplazo en ese caso.
 
 export const PRODUCTS = [
+  // ─── ALIÑOS ───────────────────────────────────────────────
   {
-    id: "alino-tradicional",
-    name: "Aliño Tradicional",
-    description: "Mezcla clásica de cebollín, cilantro y ají dulce.",
-    images: ["/assets/producto-alino-tradicional.jpg"],
-    pricePer100g: 4.5 / 5, // referencia original: 500g por $4.50
-    defaultWeight: "500g",
+    id: "alino-personalizado",
+    name: "Aliño Personalizado",
+    description: "Aliño a tu gusto, con la combinación de ingredientes que prefieras.",
+    images: [],
+    categoria: "alinos",
     badge: "bestseller",
+    destacado: true,
     stockLabel: "En Stock",
-    categoria: "alinos",
+    defaultWeight: "400g",
+    presentaciones: [
+      { id: "250g", etiqueta: "250 g", gramos: 250, precio: 0 },
+      { id: "400g", etiqueta: "400 g", gramos: 400, precio: 0, estandar: true },
+      { id: "500g", etiqueta: "500 g", gramos: 500, precio: 0 },
+    ],
+  },
+
+  // ─── ENSALADAS ────────────────────────────────────────────
+  {
+    id: "ensalada-zanahoria-repollo-cebolla-morada",
+    name: "Zanahoria + Repollo + Cebolla Morada",
+    description: "Mezcla fresca de zanahoria, repollo y cebolla morada, lista para servir.",
+    images: [],
+    categoria: "ensaladas",
+    badge: "bestseller",
+    destacado: true,
+    stockLabel: "En Stock",
+    defaultWeight: "400g",
+    presentaciones: [
+      { id: "400g", etiqueta: "400 g", gramos: 400, precio: 0, estandar: true },
+      { id: "500g", etiqueta: "500 g", gramos: 500, precio: 0 },
+    ],
   },
   {
-    id: "base-ajo-aceite",
-    name: "Base de Ajo & Aceite",
-    description: "Ajo macerado en aceite de oliva premium.",
-    images: [
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuBcO3Z6jvMkOxFaHh_4vyLD1gORfY3lNklIhEqJUlTcr8N8FMy6v0w_7zGcwDXsHq5TQvgmMwgUUln7JT1dChI0umuUW2dQH4SIybVwY2ckd4RUgPKEVGmIPe8szGdjCf5019xYTHQc4XSEo0FbsUjSdmYcKcxhwepAQ8VT59mndZSLuGPlpsksP3rnrbmjKe22Qa5z-dM5QDac_-MDaWTI_XfWK4xjtknbqSgYBVhNI_xRoK_8w89p",
+    id: "ensalada-zanahoria-repollo",
+    name: "Zanahoria + Repollo",
+    description: "Mezcla fresca de zanahoria y repollo, lista para servir.",
+    images: [],
+    categoria: "ensaladas",
+    stockLabel: "En Stock",
+    defaultWeight: "400g",
+    presentaciones: [{ id: "400g", etiqueta: "400 g", gramos: 400, precio: 0, estandar: true }],
+  },
+
+  // ─── INDIVIDUALES ─────────────────────────────────────────
+  {
+    id: "cebolla-morada",
+    name: "Cebolla Morada",
+    description: "Cebolla morada fresca, picada y lista para usar.",
+    images: [],
+    categoria: "individuales",
+    destacado: true,
+    stockLabel: "En Stock",
+    defaultWeight: "200g",
+    presentaciones: [
+      { id: "200g", etiqueta: "200 g", gramos: 200, precio: 0, estandar: true },
+      { id: "400g", etiqueta: "400 g", gramos: 400, precio: 0 },
     ],
-    pricePer100g: 6.0 / 2.5, // referencia original: 250g por $6.00
-    defaultWeight: "250g",
-    badge: "new",
-    categoria: "alinos",
   },
   {
-    id: "mix-parrillero",
-    name: "Mix Parrillero",
-    description: "Hierbas ahumadas y especias para carnes rojas.",
-    images: [
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuBsRc-X4lHB0ktpFfceyrW_nsPCaCkx_vQ9RBEqg_ekLgbloE5jKoFhktsOv3Pg9EzunxjVK_auFVGhoFk2HmA8SQwg7FDKHAhJT4GSmqJVlcZBK6W8Na_A_tlc1ud6O-KEohOHhkGY66ZKEW9Fpf5LExf4atrULBqLBGLzPzQu08TfTbn4bp94fh1_WTaXGdZU_CFrYkcIsTIN7rUWYCtGu9mtE4KudVtWFebgTDozrjYV9QCEm7ej",
+    id: "repollo",
+    name: "Repollo",
+    description: "Repollo fresco, picado y listo para usar.",
+    images: [],
+    categoria: "individuales",
+    stockLabel: "En Stock",
+    defaultWeight: "200g",
+    presentaciones: [
+      { id: "200g", etiqueta: "200 g", gramos: 200, precio: 0, estandar: true },
+      { id: "400g", etiqueta: "400 g", gramos: 400, precio: 0 },
     ],
-    pricePer100g: 5.5 / 4, // referencia original: 400g por $5.50
-    defaultWeight: "500g",
-    badge: "offer",
-    compareAtPer100g: (5.5 / 4) * 1.25, // precio "antes de oferta" para el tachado
+  },
+  {
+    id: "zanahoria",
+    name: "Zanahoria",
+    description: "Zanahoria fresca, picada y lista para usar.",
+    images: [],
+    categoria: "individuales",
+    stockLabel: "En Stock",
+    defaultWeight: "200g",
+    presentaciones: [
+      { id: "200g", etiqueta: "200 g", gramos: 200, precio: 0, estandar: true },
+      { id: "400g", etiqueta: "400 g", gramos: 400, precio: 0 },
+    ],
+  },
+
+  // ─── HIERBAS (todas 25 g) ─────────────────────────────────
+  {
+    id: "laurel",
+    name: "Laurel",
+    description: "Hoja de laurel natural, ideal para dar aroma a tus preparaciones.",
+    images: [],
     categoria: "hierbas",
+    stockLabel: "En Stock",
+    defaultWeight: "25g",
+    presentaciones: [{ id: "25g", etiqueta: "25 g", gramos: 25, precio: 0, estandar: true }],
+  },
+  {
+    id: "eucalipto",
+    name: "Eucalipto",
+    description: "Hoja de eucalipto natural.",
+    images: [],
+    categoria: "hierbas",
+    stockLabel: "En Stock",
+    defaultWeight: "25g",
+    presentaciones: [{ id: "25g", etiqueta: "25 g", gramos: 25, precio: 0, estandar: true }],
+  },
+  {
+    id: "menta",
+    name: "Menta",
+    description: "Hoja de menta natural, fresca y aromática.",
+    images: [],
+    categoria: "hierbas",
+    stockLabel: "En Stock",
+    defaultWeight: "25g",
+    presentaciones: [{ id: "25g", etiqueta: "25 g", gramos: 25, precio: 0, estandar: true }],
+  },
+  {
+    id: "hoja-de-aguacate",
+    name: "Hoja de Aguacate",
+    description: "Hoja de aguacate natural.",
+    images: [],
+    categoria: "hierbas",
+    stockLabel: "En Stock",
+    defaultWeight: "25g",
+    presentaciones: [{ id: "25g", etiqueta: "25 g", gramos: 25, precio: 0, estandar: true }],
+  },
+  {
+    id: "toronjil",
+    name: "Toronjil",
+    description: "Toronjil natural, ideal para infusiones.",
+    images: [],
+    categoria: "hierbas",
+    stockLabel: "En Stock",
+    defaultWeight: "25g",
+    presentaciones: [{ id: "25g", etiqueta: "25 g", gramos: 25, precio: 0, estandar: true }],
+  },
+  {
+    id: "hoja-de-guayaba",
+    name: "Hoja de Guayaba",
+    description: "Hoja de guayaba natural.",
+    images: [],
+    categoria: "hierbas",
+    stockLabel: "En Stock",
+    defaultWeight: "25g",
+    presentaciones: [{ id: "25g", etiqueta: "25 g", gramos: 25, precio: 0, estandar: true }],
+  },
+  {
+    id: "malojillo",
+    name: "Malojillo",
+    description: "Malojillo (limoncillo) natural, ideal para infusiones.",
+    images: [],
+    categoria: "hierbas",
+    stockLabel: "En Stock",
+    defaultWeight: "25g",
+    presentaciones: [{ id: "25g", etiqueta: "25 g", gramos: 25, precio: 0, estandar: true }],
   },
 ];
 
-export function priceForWeight(product, weightKey) {
-  const weight = WEIGHTS.find((w) => w.key === weightKey) ?? WEIGHTS[1];
-  const price = (product.pricePer100g * weight.grams) / 100;
-  return Math.round(price * 100) / 100;
+// Precio de una presentación específica de un producto. Esta es LA ÚNICA
+// función que calcula precios en toda la app — el carrito, el catálogo y la
+// página de producto la usan exactamente igual, así que nunca puede haber
+// diferencia entre lo que se muestra y lo que se cobra.
+export function priceForWeight(product, weightId) {
+  const presentacion =
+    product.presentaciones?.find((p) => p.id === weightId) ?? product.presentaciones?.[0];
+  return presentacion ? presentacion.precio : 0;
 }
 
-export function compareAtPriceForWeight(product, weightKey) {
-  if (!product.compareAtPer100g) return null;
-  const weight = WEIGHTS.find((w) => w.key === weightKey) ?? WEIGHTS[1];
-  const price = (product.compareAtPer100g * weight.grams) / 100;
-  return Math.round(price * 100) / 100;
+// Precio "antes de oferta" de una presentación, si la tiene configurada
+// (campo opcional `precioComparativo` dentro de la presentación). Ningún
+// producto lo usa todavía; queda listo para cuando haya una oferta real.
+export function compareAtPriceForWeight(product, weightId) {
+  const presentacion = product.presentaciones?.find((p) => p.id === weightId);
+  return presentacion?.precioComparativo ?? null;
 }
 
 export function getProductById(id) {
@@ -71,6 +203,13 @@ export function getProductById(id) {
 export function getRelatedProducts(product, limit = 4) {
   if (!product) return [];
   return PRODUCTS.filter((p) => p.id !== product.id && p.categoria === product.categoria).slice(0, limit);
+}
+
+// Productos destacados para el Home (sección "Best Sellers"). Para cambiar
+// cuáles se muestran ahí, solo hay que mover el flag `destacado: true/false`
+// en el producto correspondiente — no hace falta tocar ningún componente.
+export function getFeaturedProducts() {
+  return PRODUCTS.filter((p) => p.destacado);
 }
 
 // Normaliza cualquier objeto "tipo producto" (un producto real de PRODUCTS,

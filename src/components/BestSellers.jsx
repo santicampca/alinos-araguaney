@@ -1,8 +1,9 @@
 import React from "react";
 import ProductCard from "./ProductCard.jsx";
-import { PRODUCTS } from "../data/products.js";
+import { getFeaturedProducts } from "../data/products.js";
 
 export default function BestSellers() {
+  const productosDestacados = getFeaturedProducts();
   return (
     <section id="shop" className="py-section-gap-mobile md:py-section-gap-desktop bg-surface-container-low">
       <div className="max-w-[1440px] mx-auto px-grid-margin">
@@ -16,7 +17,7 @@ export default function BestSellers() {
           </a>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-grid-gutter">
-          {PRODUCTS.map((product) => (
+          {productosDestacados.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>

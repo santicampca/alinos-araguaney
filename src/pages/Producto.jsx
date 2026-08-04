@@ -5,8 +5,7 @@ import { motion } from "framer-motion";
 import { priceForWeight, compareAtPriceForWeight, getProductImages } from "../data/products.js";
 import { categorias } from "../data/categorias.js";
 import { useProductDetail } from "../hooks/useProductDetail.js";
-import { useCart } from "../context/CartContext.jsx";
-import { useToast } from "../context/ToastContext.jsx";
+import { useUpsell } from "../context/UpsellContext.jsx";
 
 import Breadcrumb from "../components/producto/Breadcrumb.jsx";
 import ProductGallery from "../components/producto/ProductGallery.jsx";
@@ -21,8 +20,7 @@ export default function Producto() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { cargando, producto, relacionados } = useProductDetail(id);
-  const { addItem } = useCart();
-  const { showToast } = useToast();
+  const { solicitarAgregado } = useUpsell();
 
   const [weight, setWeight] = useState(null);
   const [quantity, setQuantity] = useState(1);
@@ -32,11 +30,17 @@ export default function Producto() {
 
   const categoriaInfo = producto ? categorias.find((c) => c.id === producto.categoria) : null;
 
+  // Misma función que usa el carrito (priceForWeight) — el precio unitario se
+  // recalcula en cada render según el peso elegido, y el total según la
+  // cantidad. Nunca hay un cálculo distinto al que usa el carrito.
+  const precioUnitario = producto ? priceForWeight(producto, pesoActual) : 0;
+  const precioComparativoUnitario = producto ? compareAtPriceForWeight(producto, pesoActual) : null;
+  const precioTotal = precioUnitario * quantity;
+  const precioComparativoTotal = precioComparativoUnitario ? precioComparativoUnitario * quantity : null;
+
   const handleAddToCart = () => {
     if (!producto) return;
-    const price = priceForWeight(producto, pesoActual);
-    addItem(producto, pesoActual, quantity, price);
-    showToast(`${producto.name} agregado al carrito`, { icon: "shopping_bag" });
+    solicitarAgregado(producto, pesoActual, quantity, precioUnitario);
     setQuantity(1);
   };
 
@@ -90,20 +94,27 @@ export default function Producto() {
 
                 <p className="font-body-lg text-body-lg text-on-surface-variant">{producto.description}</p>
 
-                <div className="flex items-baseline gap-3">
-                  <span className="font-headline-lg text-headline-lg text-primary">
-                    ${priceForWeight(producto, pesoActual).toFixed(2)}
-                  </span>
-                  {compareAtPriceForWeight(producto, pesoActual) && (
-                    <span className="text-lg line-through text-outline">
-                      ${compareAtPriceForWeight(producto, pesoActual).toFixed(2)}
+                <div className="space-y-1">
+                  <div className="flex items-baseline gap-3">
+                    <span className="font-headline-lg text-headline-lg text-primary">
+                      ${precioTotal.toFixed(2)}
                     </span>
+                    {precioComparativoTotal && (
+                      <span className="text-lg line-through text-outline">
+                        ${precioComparativoTotal.toFixed(2)}
+                      </span>
+                    )}
+                  </div>
+                  {quantity > 1 && (
+                    <p className="text-sm text-on-surface-variant">
+                      ${precioUnitario.toFixed(2)} c/u × {quantity} unidades
+                    </p>
                   )}
                 </div>
 
                 <div className="space-y-3">
                   <p className="font-label-lg text-label-lg">Peso</p>
-                  <WeightSelector selected={pesoActual} onChange={setWeight} />
+                  <WeightSelector presentaciones={producto.presentaciones} selected={pesoActual} onChange={setWeight} />
                 </div>
 
                 <div className="flex items-center gap-4 pt-2">

@@ -5,22 +5,23 @@ import ProductBadge from "./ProductBadge.jsx";
 import QuantitySelector from "./QuantitySelector.jsx";
 import WeightSelector from "./WeightSelector.jsx";
 import { priceForWeight, compareAtPriceForWeight, getProductThumbnail } from "../data/products.js";
-import { useCart } from "../context/CartContext.jsx";
-import { useToast } from "../context/ToastContext.jsx";
+import { useUpsell } from "../context/UpsellContext.jsx";
 
 export default function ProductCard({ product }) {
   const [weight, setWeight] = useState(product.defaultWeight);
   const [quantity, setQuantity] = useState(1);
-  const { addItem, openCart } = useCart();
-  const { showToast } = useToast();
+  const { solicitarAgregado } = useUpsell();
 
   const price = priceForWeight(product, weight);
   const compareAtPrice = compareAtPriceForWeight(product, weight);
   const detailUrl = `/producto/${product.id}`;
+  const thumbnail = getProductThumbnail(product);
 
   const handleAddToCart = () => {
-    addItem(product, weight, quantity, price);
-    showToast(`${product.name} agregado al carrito`, { icon: "shopping_bag" });
+    // Punto único de entrada al carrito: si este producto está configurado
+    // como disparador de venta adicional, acá se intercepta y se abre el
+    // modal; si no, agrega directo y muestra el toast (ver UpsellContext).
+    solicitarAgregado(product, weight, quantity, price);
     setQuantity(1);
   };
 
@@ -38,11 +39,19 @@ export default function ProductCard({ product }) {
           al detalle sin alterar el diseño ni el grid de la tarjeta. */}
       <Link to={detailUrl} className="contents" aria-label={`Ver detalle de ${product.name}`}>
         <div className="relative aspect-square overflow-hidden bg-[#F5F5F7] cursor-pointer">
-          <img
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-            src={getProductThumbnail(product)}
-            alt={product.name}
-          />
+          {thumbnail ? (
+            <img
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              src={thumbnail}
+              alt={product.name}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <span className="material-symbols-outlined text-outline" style={{ fontSize: "40px" }}>
+                image
+              </span>
+            </div>
+          )}
           <ProductBadge type={product.badge} />
           {product.stockLabel && (
             <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-green-700 font-label-md text-label-md flex items-center gap-1 shadow-sm">
@@ -68,7 +77,7 @@ export default function ProductCard({ product }) {
         </Link>
 
         <div className="space-y-3 pt-2 mt-auto">
-          <WeightSelector selected={weight} onChange={setWeight} />
+          <WeightSelector presentaciones={product.presentaciones} selected={weight} onChange={setWeight} />
           <div className="flex items-center justify-between gap-3">
             <QuantitySelector quantity={quantity} onChange={setQuantity} />
             <motion.button

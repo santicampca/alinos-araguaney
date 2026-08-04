@@ -14,6 +14,7 @@ import Subscription from "./components/Subscription.jsx";
 import Testimonials from "./components/Testimonials.jsx";
 import Footer from "./components/Footer.jsx";
 import CartDrawer from "./components/CartDrawer.jsx";
+import UpsellModal from "./components/UpsellModal.jsx";
 
 function Home() {
   const location = useLocation();
@@ -50,6 +51,7 @@ export default function App() {
       <TopBar />
       <Navbar />
       <CartDrawer />
+      <UpsellModal />
 
       <main>
         <Routes>
